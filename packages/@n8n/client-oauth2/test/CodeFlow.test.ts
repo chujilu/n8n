@@ -26,10 +26,10 @@ describe('CodeFlow', () => {
 
 	describe('#getUri', () => {
 		it('should return a valid uri', () => {
-			expect(githubAuth.code.getUri()).toEqual(
+			expect(githubAuth.code.getUri().toString()).toEqual(
 				`${config.authorizationUri}?client_id=abc&` +
 					`redirect_uri=${encodeURIComponent(config.redirectUri)}&` +
-					'response_type=code&state=&scope=notifications',
+					'response_type=code&scope=notifications',
 			);
 		});
 
@@ -43,10 +43,10 @@ describe('CodeFlow', () => {
 					authorizationGrants: ['code'],
 					redirectUri: config.redirectUri,
 				});
-				expect(authWithoutScopes.code.getUri()).toEqual(
+				expect(authWithoutScopes.code.getUri().toString()).toEqual(
 					`${config.authorizationUri}?client_id=abc&` +
 						`redirect_uri=${encodeURIComponent(config.redirectUri)}&` +
-						'response_type=code&state=',
+						'response_type=code',
 				);
 			});
 		});
@@ -61,10 +61,10 @@ describe('CodeFlow', () => {
 				redirectUri: config.redirectUri,
 				scopes: [],
 			});
-			expect(authWithEmptyScopes.code.getUri()).toEqual(
+			expect(authWithEmptyScopes.code.getUri().toString()).toEqual(
 				`${config.authorizationUri}?client_id=abc&` +
 					`redirect_uri=${encodeURIComponent(config.redirectUri)}&` +
-					'response_type=code&state=&scope=',
+					'response_type=code&scope=',
 			);
 		});
 
@@ -78,10 +78,10 @@ describe('CodeFlow', () => {
 				redirectUri: config.redirectUri,
 				scopes: [],
 			});
-			expect(authWithEmptyScopes.code.getUri()).toEqual(
+			expect(authWithEmptyScopes.code.getUri().toString()).toEqual(
 				`${config.authorizationUri}?client_id=abc&` +
 					`redirect_uri=${encodeURIComponent(config.redirectUri)}&` +
-					'response_type=code&state=&scope=',
+					'response_type=code&scope=',
 			);
 		});
 
@@ -96,10 +96,10 @@ describe('CodeFlow', () => {
 					redirectUri: config.redirectUri,
 					scopes: ['notifications'],
 				});
-				expect(authWithParams.code.getUri()).toEqual(
+				expect(authWithParams.code.getUri().toString()).toEqual(
 					`${config.authorizationUri}?bar=qux&client_id=abc&` +
 						`redirect_uri=${encodeURIComponent(config.redirectUri)}&` +
-						'response_type=code&state=&scope=notifications',
+						'response_type=code&scope=notifications',
 				);
 			});
 		});
