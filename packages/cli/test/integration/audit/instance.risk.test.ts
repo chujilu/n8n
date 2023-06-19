@@ -8,6 +8,8 @@ import {
 	MOCK_09990_N8N_VERSION,
 	simulateOutdatedInstanceOnce,
 	simulateUpToDateInstance,
+	createWorkflowDetails,
+	createNode,
 } from './utils';
 import * as testDb from '../shared/testDb';
 import { toReportTitle } from '@/audit/utils';
@@ -31,27 +33,16 @@ afterAll(async () => {
 test('should report webhook lacking authentication', async () => {
 	const targetNodeId = uuid();
 
-	const details = {
-		id: generateNanoId(),
-		name: 'My Test Workflow',
-		active: true,
-		nodeTypes: {},
-		connections: {},
-		nodes: [
-			{
-				parameters: {
-					path: uuid(),
-					options: {},
-				},
-				id: targetNodeId,
-				name: 'Webhook',
-				type: 'n8n-nodes-base.webhook',
-				typeVersion: 1,
-				position: [0, 0] as [number, number],
-				webhookId: uuid(),
-			},
+	const details = createWorkflowDetails(
+		[
+			createNode('n8n-nodes-base.webhook', 'Webhook', targetNodeId, {
+				path: uuid(),
+				options: {},
+			}),
 		],
-	};
+		true,
+	);
+	details.nodes[0].webhookId = uuid();
 
 	await Db.collections.Workflow.save(details);
 

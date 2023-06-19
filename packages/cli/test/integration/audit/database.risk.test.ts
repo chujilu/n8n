@@ -6,9 +6,13 @@ import {
 	SQL_NODE_TYPES,
 	SQL_NODE_TYPES_WITH_QUERY_PARAMS,
 } from '@/audit/constants';
-import { getRiskSection, saveManualTriggerWorkflow } from './utils';
+import {
+	createNode,
+	createWorkflowDetails,
+	getRiskSection,
+	saveManualTriggerWorkflow,
+} from './utils';
 import * as testDb from '../shared/testDb';
-import { generateNanoId } from '@/databases/utils/generators';
 
 beforeAll(async () => {
 	await testDb.init();
@@ -28,27 +32,13 @@ test('should report expressions in queries', async () => {
 	}, {});
 
 	const promises = Object.entries(map).map(async ([nodeType, nodeId]) => {
-		const details = {
-			id: generateNanoId(),
-			name: 'My Test Workflow',
-			active: false,
-			connections: {},
-			nodeTypes: {},
-			nodes: [
-				{
-					id: nodeId,
-					name: 'My Node',
-					type: nodeType,
-					parameters: {
-						operation: 'executeQuery',
-						query: '=SELECT * FROM {{ $json.table }}',
-						additionalFields: {},
-					},
-					typeVersion: 1,
-					position: [0, 0] as [number, number],
-				},
-			],
-		};
+		const details = createWorkflowDetails([
+			createNode(nodeType, 'MyNode', nodeId, {
+				operation: 'executeQuery',
+				query: '=SELECT * FROM {{ $json.table }}',
+				additionalFields: {},
+			}),
+		]);
 
 		return Db.collections.Workflow.save(details);
 	});
@@ -81,29 +71,15 @@ test('should report expressions in query params', async () => {
 	);
 
 	const promises = Object.entries(map).map(async ([nodeType, nodeId]) => {
-		const details = {
-			id: generateNanoId(),
-			name: 'My Test Workflow',
-			active: false,
-			connections: {},
-			nodeTypes: {},
-			nodes: [
-				{
-					id: nodeId,
-					name: 'My Node',
-					type: nodeType,
-					parameters: {
-						operation: 'executeQuery',
-						query: 'SELECT * FROM users WHERE id = $1;',
-						additionalFields: {
-							queryParams: '={{ $json.userId }}',
-						},
-					},
-					typeVersion: 1,
-					position: [0, 0] as [number, number],
+		const details = createWorkflowDetails([
+			createNode(nodeType, 'MyNode', nodeId, {
+				operation: 'executeQuery',
+				query: 'SELECT * FROM users WHERE id = $1;',
+				additionalFields: {
+					queryParams: '={{ $json.userId }}',
 				},
-			],
-		};
+			}),
+		]);
 
 		return Db.collections.Workflow.save(details);
 	});
@@ -136,26 +112,12 @@ test('should report unused query params', async () => {
 	);
 
 	const promises = Object.entries(map).map(async ([nodeType, nodeId]) => {
-		const details = {
-			id: generateNanoId(),
-			name: 'My Test Workflow',
-			active: false,
-			connections: {},
-			nodeTypes: {},
-			nodes: [
-				{
-					id: nodeId,
-					name: 'My Node',
-					type: nodeType,
-					parameters: {
-						operation: 'executeQuery',
-						query: 'SELECT * FROM users WHERE id = 123;',
-					},
-					typeVersion: 1,
-					position: [0, 0] as [number, number],
-				},
-			],
-		};
+		const details = createWorkflowDetails([
+			createNode(nodeType, 'MyNode', nodeId, {
+				operation: 'executeQuery',
+				query: 'SELECT * FROM users WHERE id = 123;',
+			}),
+		]);
 
 		return Db.collections.Workflow.save(details);
 	});

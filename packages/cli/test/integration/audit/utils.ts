@@ -1,4 +1,5 @@
 import nock from 'nock';
+import type { INode } from 'n8n-workflow';
 import config from '@/config';
 import { v4 as uuid } from 'uuid';
 import * as Db from '@/Db';
@@ -7,6 +8,7 @@ import * as constants from '@/constants';
 import type { Risk } from '@/audit/types';
 import type { InstalledNodes } from '@db/entities/InstalledNodes';
 import type { InstalledPackages } from '@db/entities/InstalledPackages';
+import { generateNanoId } from '@db/utils/generators';
 
 type GetSectionKind<C extends Risk.Category> = C extends 'instance'
 	? Risk.InstanceSection
@@ -34,24 +36,36 @@ export function getRiskSection<C extends Risk.Category>(
 	throw new Error(`Expected section "${sectionTitle}" for risk "${riskCategory}"`);
 }
 
-export async function saveManualTriggerWorkflow() {
-	const details = {
-		id: '1',
-		name: 'My Test Workflow',
-		active: false,
+export const createNode = (
+	type: string,
+	name: string,
+	id = uuid(),
+	parameters = {},
+	credentials = {},
+) => ({
+	id,
+	name,
+	type,
+	typeVersion: 1,
+	position: [0, 0] as [number, number],
+	parameters,
+	credentials,
+});
+
+export const createWorkflowDetails = (nodes: INode[], active = false) => {
+	const id = generateNanoId();
+	return {
+		id,
+		name: `My Test Workflow ${id}`,
+		active,
 		connections: {},
 		nodeTypes: {},
-		nodes: [
-			{
-				id: uuid(),
-				name: 'My Node',
-				type: 'n8n-nodes-base.manualTrigger',
-				typeVersion: 1,
-				position: [0, 0] as [number, number],
-			},
-		],
+		nodes,
 	};
+};
 
+export async function saveManualTriggerWorkflow() {
+	const details = createWorkflowDetails([createNode('manualTrigger', 'My Node')]);
 	return Db.collections.Workflow.save(details);
 }
 

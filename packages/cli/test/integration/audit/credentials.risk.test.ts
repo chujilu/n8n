@@ -1,11 +1,10 @@
-import { v4 as uuid } from 'uuid';
 import * as Db from '@/Db';
 import config from '@/config';
 import { audit } from '@/audit';
 import { CREDENTIALS_REPORT } from '@/audit/constants';
-import { getRiskSection } from './utils';
+import { generateNanoId } from '@db/utils/generators';
+import { createNode, createWorkflowDetails, getRiskSection } from './utils';
 import * as testDb from '../shared/testDb';
-import { generateNanoId } from '@/databases/utils/generators';
 
 beforeAll(async () => {
 	await testDb.init();
@@ -28,22 +27,7 @@ test('should report credentials not in any use', async () => {
 		nodesAccess: [{ nodeType: 'n8n-nodes-base.slack', date: '2022-12-21T11:23:00.561Z' }],
 	};
 
-	const workflowDetails = {
-		id: generateNanoId(),
-		name: 'My Test Workflow',
-		active: false,
-		connections: {},
-		nodeTypes: {},
-		nodes: [
-			{
-				id: uuid(),
-				name: 'My Node',
-				type: 'n8n-nodes-base.slack',
-				typeVersion: 1,
-				position: [0, 0] as [number, number],
-			},
-		],
-	};
+	const workflowDetails = createWorkflowDetails([createNode('n8n-nodes-base.slack', 'My Node')]);
 
 	await Promise.all([
 		Db.collections.Credentials.save(credentialDetails),
@@ -76,22 +60,7 @@ test('should report credentials not in active use', async () => {
 
 	const credential = await Db.collections.Credentials.save(credentialDetails);
 
-	const workflowDetails = {
-		id: generateNanoId(),
-		name: 'My Test Workflow',
-		active: false,
-		connections: {},
-		nodeTypes: {},
-		nodes: [
-			{
-				id: uuid(),
-				name: 'My Node',
-				type: 'n8n-nodes-base.slack',
-				typeVersion: 1,
-				position: [0, 0] as [number, number],
-			},
-		],
-	};
+	const workflowDetails = createWorkflowDetails([createNode('n8n-nodes-base.slack', 'My Node')]);
 
 	await Db.collections.Workflow.save(workflowDetails);
 
@@ -121,28 +90,20 @@ test('should report credential in not recently executed workflow', async () => {
 
 	const credential = await Db.collections.Credentials.save(credentialDetails);
 
-	const workflowDetails = {
-		id: generateNanoId(),
-		name: 'My Test Workflow',
-		active: false,
-		connections: {},
-		nodeTypes: {},
-		nodes: [
+	const workflowDetails = createWorkflowDetails([
+		createNode(
+			'n8n-nodes-base.slack',
+			'My Node',
+			undefined,
+			{},
 			{
-				id: uuid(),
-				name: 'My Node',
-				type: 'n8n-nodes-base.slack',
-				typeVersion: 1,
-				position: [0, 0] as [number, number],
-				credentials: {
-					slackApi: {
-						id: credential.id,
-						name: credential.name,
-					},
+				slackApi: {
+					id: credential.id,
+					name: credential.name,
 				},
 			},
-		],
-	};
+		),
+	]);
 
 	const workflow = await Db.collections.Workflow.save(workflowDetails);
 
@@ -189,28 +150,23 @@ test('should not report credentials in recently executed workflow', async () => 
 
 	const credential = await Db.collections.Credentials.save(credentialDetails);
 
-	const workflowDetails = {
-		id: generateNanoId(),
-		name: 'My Test Workflow',
-		active: true,
-		connections: {},
-		nodeTypes: {},
-		nodes: [
-			{
-				id: uuid(),
-				name: 'My Node',
-				type: 'n8n-nodes-base.slack',
-				typeVersion: 1,
-				position: [0, 0] as [number, number],
-				credentials: {
+	const workflowDetails = createWorkflowDetails(
+		[
+			createNode(
+				'n8n-nodes-base.slack',
+				'My Node',
+				undefined,
+				{},
+				{
 					slackApi: {
 						id: credential.id,
 						name: credential.name,
 					},
 				},
-			},
+			),
 		],
-	};
+		true,
+	);
 
 	const workflow = await Db.collections.Workflow.save(workflowDetails);
 
