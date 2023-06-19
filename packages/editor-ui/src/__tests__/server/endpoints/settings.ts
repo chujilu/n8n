@@ -55,7 +55,6 @@ const defaultSettings: IN8nUISettings = {
 	urlBaseEditor: '',
 	urlBaseWebhook: '',
 	userManagement: {
-		enabled: true,
 		showSetupOnFirstLoad: true,
 		smtpSetup: true,
 		authenticationMethod: 'email',
@@ -71,9 +70,13 @@ const defaultSettings: IN8nUISettings = {
 	variables: {
 		limit: -1,
 	},
-	userActivationSurveyEnabled: false,
 	deployment: {
 		type: 'default',
+	},
+	banners: {
+		v1: {
+			dismissed: false,
+		},
 	},
 };
 

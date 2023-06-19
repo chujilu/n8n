@@ -6,7 +6,7 @@ import type { IncomingHttpHeaders } from 'http';
 import type { Readable } from 'stream';
 import type { URLSearchParams } from 'url';
 import type { OptionsWithUri, OptionsWithUrl } from 'request';
-import type { RequestPromiseOptions, RequestPromiseAPI } from 'request-promise-native';
+import type { RequestPromiseOptions } from 'request-promise-native';
 import type { PathLike } from 'fs';
 
 import type { CODE_EXECUTION_MODES, CODE_LANGUAGES } from './Constants';
@@ -657,7 +657,7 @@ export type ICredentialTestFunction = (
 
 export interface ICredentialTestFunctions {
 	helpers: {
-		request: RequestPromiseAPI;
+		request: (uriOrObject: string | object, options?: object) => Promise<any>;
 	};
 }
 
@@ -2024,7 +2024,6 @@ export interface IUserManagementSettings {
 
 export interface IUserSettings {
 	isOnboarded?: boolean;
-	showUserActivationSurvey?: boolean;
 	firstSuccessfulWorkflowId?: string;
 	userActivated?: boolean;
 	allowSSOManualLogin?: boolean;
@@ -2073,7 +2072,6 @@ export interface IN8nUISettings {
 		debug: boolean;
 	};
 	personalizationSurveyEnabled: boolean;
-	userActivationSurveyEnabled: boolean;
 	defaultLocale: string;
 	userManagement: IUserManagementSettings;
 	sso: {
@@ -2122,5 +2120,10 @@ export interface IN8nUISettings {
 	};
 	variables: {
 		limit: number;
+	};
+	banners: {
+		v1: {
+			dismissed: boolean;
+		};
 	};
 }
