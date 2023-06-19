@@ -5,7 +5,8 @@ import type { QueryRunner } from 'typeorm/query-runner/QueryRunner';
 import config from '@/config';
 import { getLogger } from '@/Logger';
 import { inTest } from '@/constants';
-import type { Migration } from '@db/types';
+import { createSchemaBuilder } from '@db/dsl';
+import type { Migration, MigrationContext } from '@db/types';
 
 const logger = getLogger();
 
@@ -68,17 +69,26 @@ export const wrapMigration = (migration: Migration) => {
 	const dbName = config.getEnv(`database.${dbType === 'mariadb' ? 'mysqldb' : dbType}.database`);
 	const tablePrefix = config.getEnv('database.tablePrefix');
 	const migrationName = migration.name;
-	const context = { tablePrefix, dbType, dbName, migrationName };
+
+	const createContext = (queryRunner: QueryRunner): MigrationContext => ({
+		logger,
+		tablePrefix,
+		dbType,
+		dbName,
+		migrationName,
+		queryRunner,
+		schemaBuilder: createSchemaBuilder(tablePrefix, queryRunner),
+	});
 
 	const { up, down } = migration.prototype;
 	Object.assign(migration.prototype, {
-		up: async (queryRunner: QueryRunner) => {
+		async up(queryRunner: QueryRunner) {
 			logMigrationStart(migrationName);
-			await up.call(this, { queryRunner, ...context });
+			await up.call(this, createContext(queryRunner));
 			logMigrationEnd(migrationName);
 		},
-		down: async (queryRunner: QueryRunner) => {
-			await down?.call(this, { queryRunner, ...context });
+		async down(queryRunner: QueryRunner) {
+			await down?.call(this, createContext(queryRunner));
 		},
 	});
 };

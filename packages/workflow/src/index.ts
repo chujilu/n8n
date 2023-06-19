@@ -13,6 +13,7 @@ export * from './MessageEventBus';
 export * from './ExecutionStatus';
 export * from './Expression';
 export * from './ExpressionError';
+export * from './LazyPromise';
 export * from './NodeErrors';
 export * from './NodeHelpers';
 export * from './RoutingNode';

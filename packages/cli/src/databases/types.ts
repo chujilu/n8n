@@ -1,5 +1,6 @@
-import type { Logger } from '@/Logger';
 import type { QueryRunner } from 'typeorm';
+import type { Logger } from '@/Logger';
+import type { createSchemaBuilder } from './dsl';
 
 export type DatabaseType = 'mariadb' | 'postgresdb' | 'mysqldb' | 'sqlite';
 
@@ -10,6 +11,7 @@ export interface MigrationContext {
 	dbType: DatabaseType;
 	dbName: string;
 	migrationName: string;
+	schemaBuilder: ReturnType<typeof createSchemaBuilder>;
 }
 
 type MigrationFn = (ctx: MigrationContext) => Promise<void>;
