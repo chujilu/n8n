@@ -1,9 +1,5 @@
-import type {
-	IDataObject,
-	IExecuteFunctions,
-	INodeExecutionData,
-	INodeProperties,
-} from 'n8n-workflow';
+import type { IExecuteFunctions } from 'n8n-core';
+import type { IDataObject, INodeExecutionData, INodeProperties } from 'n8n-workflow';
 
 import type { QueryRunner, QueryValues, QueryWithValues } from '../../helpers/interfaces';
 import { AUTO_MAP, DATA_MODE } from '../../helpers/interfaces';

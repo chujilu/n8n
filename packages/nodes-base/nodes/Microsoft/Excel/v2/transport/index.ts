@@ -1,11 +1,6 @@
 import type { OptionsWithUri } from 'request';
-import type {
-	IDataObject,
-	IExecuteFunctions,
-	IExecuteSingleFunctions,
-	ILoadOptionsFunctions,
-	JsonObject,
-} from 'n8n-workflow';
+import type { IExecuteFunctions, IExecuteSingleFunctions, ILoadOptionsFunctions } from 'n8n-core';
+import type { IDataObject, JsonObject } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 
 export async function microsoftApiRequest(

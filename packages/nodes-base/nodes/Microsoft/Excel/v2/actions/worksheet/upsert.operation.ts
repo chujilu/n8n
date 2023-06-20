@@ -1,9 +1,5 @@
-import type {
-	IDataObject,
-	IExecuteFunctions,
-	INodeExecutionData,
-	INodeProperties,
-} from 'n8n-workflow';
+import type { IExecuteFunctions } from 'n8n-core';
+import type { IDataObject, INodeExecutionData, INodeProperties } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 import { processJsonInput, updateDisplayOptions } from '../../../../../../utils/utilities';
 import type { ExcelResponse, UpdateSummary } from '../../helpers/interfaces';

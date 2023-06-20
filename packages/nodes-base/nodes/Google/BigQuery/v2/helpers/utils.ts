@@ -1,5 +1,6 @@
+import type { IExecuteFunctions } from 'n8n-core';
 import { constructExecutionMetaData } from 'n8n-core';
-import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import type { IDataObject, INodeExecutionData } from 'n8n-workflow';
 import { jsonParse, NodeOperationError } from 'n8n-workflow';
 import type { SchemaField, TableRawData, TableSchema } from './interfaces';
 

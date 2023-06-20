@@ -1,3 +1,5 @@
+import type { IWebhookFunctions } from 'n8n-core';
+
 import type {
 	IDataObject,
 	IHookFunctions,
@@ -5,7 +7,6 @@ import type {
 	INodePropertyOptions,
 	INodeType,
 	INodeTypeDescription,
-	IWebhookFunctions,
 	IWebhookResponseData,
 } from 'n8n-workflow';
 
