@@ -1,4 +1,5 @@
 import nock from 'nock';
+import type { DeepPartial } from 'typeorm';
 import type { INode } from 'n8n-workflow';
 import config from '@/config';
 import { v4 as uuid } from 'uuid';
@@ -6,8 +7,10 @@ import * as Db from '@/Db';
 import { toReportTitle } from '@/audit/utils';
 import * as constants from '@/constants';
 import type { Risk } from '@/audit/types';
+import type { CredentialsEntity } from '@db/entities/CredentialsEntity';
 import type { InstalledNodes } from '@db/entities/InstalledNodes';
 import type { InstalledPackages } from '@db/entities/InstalledPackages';
+import type { WorkflowEntity } from '@db/entities/WorkflowEntity';
 import { generateNanoId } from '@db/utils/generators';
 
 type GetSectionKind<C extends Risk.Category> = C extends 'instance'
@@ -52,14 +55,24 @@ export const createNode = (
 	credentials,
 });
 
-export const createWorkflowDetails = (nodes: INode[], active = false) => {
+export const createCredentialDetails = (): DeepPartial<CredentialsEntity> => ({
+	id: generateNanoId(),
+	name: 'My Slack Credential',
+	data: 'U2FsdGVkX18WjITBG4IDqrGB1xE/uzVNjtwDAG3lP7E=',
+	type: 'slackApi',
+	nodesAccess: [{ nodeType: 'n8n-nodes-base.slack', date: '2022-12-21T11:23:00.561Z' }],
+});
+
+export const createWorkflowDetails = (
+	nodes: INode[],
+	active = false,
+): DeepPartial<WorkflowEntity> => {
 	const id = generateNanoId();
 	return {
 		id,
 		name: `My Test Workflow ${id}`,
 		active,
 		connections: {},
-		nodeTypes: {},
 		nodes,
 	};
 };

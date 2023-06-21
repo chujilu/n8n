@@ -30,11 +30,9 @@ test('should report filesystem interaction nodes', async () => {
 		{},
 	);
 
-	const promises = Object.entries(map).map(async ([nodeType, nodeId]) => {
-		const details = createWorkflowDetails([createNode(nodeType, 'MyNode', nodeId)]);
-
-		return Db.collections.Workflow.save(details);
-	});
+	const promises = Object.entries(map).map(async ([nodeType, nodeId]) =>
+		Db.collections.Workflow.save(createWorkflowDetails([createNode(nodeType, 'MyNode', nodeId)])),
+	);
 
 	await Promise.all(promises);
 

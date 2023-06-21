@@ -31,17 +31,17 @@ test('should report expressions in queries', async () => {
 		return (acc[cur] = uuid()), acc;
 	}, {});
 
-	const promises = Object.entries(map).map(async ([nodeType, nodeId]) => {
-		const details = createWorkflowDetails([
-			createNode(nodeType, 'MyNode', nodeId, {
-				operation: 'executeQuery',
-				query: '=SELECT * FROM {{ $json.table }}',
-				additionalFields: {},
-			}),
-		]);
-
-		return Db.collections.Workflow.save(details);
-	});
+	const promises = Object.entries(map).map(async ([nodeType, nodeId]) =>
+		Db.collections.Workflow.save(
+			createWorkflowDetails([
+				createNode(nodeType, 'MyNode', nodeId, {
+					operation: 'executeQuery',
+					query: '=SELECT * FROM {{ $json.table }}',
+					additionalFields: {},
+				}),
+			]),
+		),
+	);
 
 	await Promise.all(promises);
 
@@ -70,19 +70,19 @@ test('should report expressions in query params', async () => {
 		{},
 	);
 
-	const promises = Object.entries(map).map(async ([nodeType, nodeId]) => {
-		const details = createWorkflowDetails([
-			createNode(nodeType, 'MyNode', nodeId, {
-				operation: 'executeQuery',
-				query: 'SELECT * FROM users WHERE id = $1;',
-				additionalFields: {
-					queryParams: '={{ $json.userId }}',
-				},
-			}),
-		]);
-
-		return Db.collections.Workflow.save(details);
-	});
+	const promises = Object.entries(map).map(async ([nodeType, nodeId]) =>
+		Db.collections.Workflow.save(
+			createWorkflowDetails([
+				createNode(nodeType, 'MyNode', nodeId, {
+					operation: 'executeQuery',
+					query: 'SELECT * FROM users WHERE id = $1;',
+					additionalFields: {
+						queryParams: '={{ $json.userId }}',
+					},
+				}),
+			]),
+		),
+	);
 
 	await Promise.all(promises);
 
@@ -111,16 +111,16 @@ test('should report unused query params', async () => {
 		{},
 	);
 
-	const promises = Object.entries(map).map(async ([nodeType, nodeId]) => {
-		const details = createWorkflowDetails([
-			createNode(nodeType, 'MyNode', nodeId, {
-				operation: 'executeQuery',
-				query: 'SELECT * FROM users WHERE id = 123;',
-			}),
-		]);
-
-		return Db.collections.Workflow.save(details);
-	});
+	const promises = Object.entries(map).map(async ([nodeType, nodeId]) =>
+		Db.collections.Workflow.save(
+			createWorkflowDetails([
+				createNode(nodeType, 'MyNode', nodeId, {
+					operation: 'executeQuery',
+					query: 'SELECT * FROM users WHERE id = 123;',
+				}),
+			]),
+		),
+	);
 
 	await Promise.all(promises);
 

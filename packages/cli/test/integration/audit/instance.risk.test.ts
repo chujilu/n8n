@@ -33,16 +33,12 @@ afterAll(async () => {
 test('should report webhook lacking authentication', async () => {
 	const targetNodeId = uuid();
 
-	const details = createWorkflowDetails(
-		[
-			createNode('n8n-nodes-base.webhook', 'Webhook', targetNodeId, {
-				path: uuid(),
-				options: {},
-			}),
-		],
-		true,
-	);
-	details.nodes[0].webhookId = uuid();
+	const node = createNode('n8n-nodes-base.webhook', 'Webhook', targetNodeId, {
+		path: uuid(),
+		options: {},
+	});
+	node.webhookId = uuid();
+	const details = createWorkflowDetails([node], true);
 
 	await Db.collections.Workflow.save(details);
 
