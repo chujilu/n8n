@@ -1,4 +1,4 @@
-import { ExpressionExtensionError } from '../ExpressionError';
+import { ExpressionExtensionError } from '../errors/ExpressionErrors';
 import { average as aAverage } from './ArrayExtensions';
 
 const min = Math.min;

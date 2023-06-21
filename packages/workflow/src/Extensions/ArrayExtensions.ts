@@ -1,4 +1,4 @@
-import { ExpressionError, ExpressionExtensionError } from '../ExpressionError';
+import { ExpressionError, ExpressionExtensionError } from '../errors/ExpressionErrors';
 import type { ExtensionMap } from './Extensions';
 import { compact as oCompact } from './ObjectExtensions';
 import deepEqual from 'deep-equal';

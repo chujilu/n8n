@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 // import { createHash } from 'crypto';
 import { titleCase } from 'title-case';
-import * as ExpressionError from '../ExpressionError';
+import * as ExpressionError from '../errors/ExpressionErrors';
 import type { ExtensionMap } from './Extensions';
 import CryptoJS from 'crypto-js';
 import { encode } from 'js-base64';

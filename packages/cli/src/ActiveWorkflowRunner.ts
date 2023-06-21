@@ -35,6 +35,7 @@ import {
 	WorkflowActivationError,
 	LoggerProxy as Logger,
 	ErrorReporterProxy as ErrorReporter,
+	WorkflowExecutionWarning,
 } from 'n8n-workflow';
 
 import type express from 'express';
@@ -511,7 +512,7 @@ export class ActiveWorkflowRunner {
 			relations: ['shared', 'shared.user', 'shared.user.globalRole'],
 		});
 		if (workflowData === null) {
-			throw new Error(`Could not find workflow with id "${workflowId}"`);
+			throw new WorkflowExecutionWarning(`Could not find workflow with id "${workflowId}"`);
 		}
 
 		const workflow = new Workflow({
@@ -780,7 +781,7 @@ export class ActiveWorkflowRunner {
 			}
 
 			if (!workflowData) {
-				throw new Error(`Could not find workflow with id "${workflowId}".`);
+				throw new WorkflowExecutionWarning(`Could not find workflow with id "${workflowId}".`);
 			}
 			workflowInstance = new Workflow({
 				id: workflowId,
@@ -796,8 +797,9 @@ export class ActiveWorkflowRunner {
 			const canBeActivated = workflowInstance.checkIfWorkflowCanBeActivated(START_NODES);
 			if (!canBeActivated) {
 				Logger.error(`Unable to activate workflow "${workflowData.name}"`);
-				throw new Error(
+				throw new WorkflowActivationError(
 					'The workflow can not be activated because it does not contain any nodes which could start the workflow. Only workflows which have trigger or webhook nodes can be activated.',
+					{ severity: 'warning' },
 				);
 			}
 
@@ -806,7 +808,9 @@ export class ActiveWorkflowRunner {
 				(shared) => shared.role.name === 'owner',
 			);
 			if (!workflowOwner) {
-				throw new Error('Workflow cannot be activated because it has no owner');
+				throw new WorkflowActivationError('Workflow cannot be activated because it has no owner', {
+					severity: 'warning',
+				});
 			}
 			const additionalData = await WorkflowExecuteAdditionalData.getBase(workflowOwner.user.id);
 			const getTriggerFunctions = this.getExecuteTriggerFunctions(

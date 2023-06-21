@@ -7,9 +7,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // eslint-disable-next-line max-classes-per-file
 import { parseString } from 'xml2js';
-import type { IDataObject, INode, IStatusCodeMessages, JsonObject } from './Interfaces';
+import type { IDataObject, INode, JsonObject } from '../Interfaces';
+import { BaseError } from './BaseError';
+import type { Severity, BaseErrorOptions } from './BaseError';
 
-type Severity = 'warning' | 'error';
+export interface IStatusCodeMessages {
+	[key: string]: string;
+}
 
 /**
  * Top-level properties where an error message can be found in an API response.
@@ -58,61 +62,12 @@ const ERROR_STATUS_PROPERTIES = [
  */
 const ERROR_NESTING_PROPERTIES = ['error', 'err', 'response', 'body', 'data'];
 
-interface ExecutionBaseErrorOptions {
-	cause?: Error | JsonObject;
-	severity?: Severity;
-}
-
-export abstract class ExecutionBaseError extends Error {
-	description: string | null | undefined;
-
-	cause: Error | JsonObject | undefined;
-
-	timestamp: number;
-
-	context: IDataObject = {};
-
-	lineNumber: number | undefined;
-
-	severity: Severity = 'error';
-
-	constructor(message: string, { cause, severity }: ExecutionBaseErrorOptions) {
-		const options = cause instanceof Error ? { cause } : {};
-		super(message, options);
-
-		this.name = this.constructor.name;
-		this.timestamp = Date.now();
-		this.severity = severity ?? 'error';
-
-		if (cause instanceof ExecutionBaseError) {
-			this.context = cause.context;
-		} else if (cause && !(cause instanceof Error)) {
-			this.cause = cause;
-		}
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	toJSON?(): any {
-		return {
-			message: this.message,
-			lineNumber: this.lineNumber,
-			timestamp: this.timestamp,
-			name: this.name,
-			description: this.description,
-			context: this.context,
-			cause: this.cause,
-		};
-	}
-}
-
 /**
  * Base class for specific NodeError-types, with functionality for finding
  * a value recursively inside an error object.
  */
-abstract class NodeError extends ExecutionBaseError {
-	node: INode;
-
-	constructor(node: INode, { cause, severity }: ExecutionBaseErrorOptions) {
+abstract class NodeBaseError extends BaseError {
+	constructor(readonly node: INode, { cause, severity }: BaseErrorOptions) {
 		const message = cause instanceof Error ? cause.message : '';
 		super(message, { cause, severity });
 		this.node = node;
@@ -246,9 +201,7 @@ interface NodeOperationErrorOptions {
 /**
  * Class for instantiating an operational error, e.g. an invalid credentials error.
  */
-export class NodeOperationError extends NodeError {
-	lineNumber: number | undefined;
-
+export class NodeOperationError extends NodeBaseError {
 	constructor(node: INode, error: Error | string, options: NodeOperationErrorOptions = {}) {
 		if (typeof error === 'string') {
 			error = new Error(error);
@@ -295,7 +248,7 @@ interface NodeApiErrorOptions extends NodeOperationErrorOptions {
  * Class for instantiating an error in an API response, e.g. a 404 Not Found response,
  * with an HTTP error code, an error message and a description.
  */
-export class NodeApiError extends NodeError {
+export class NodeApiError extends NodeBaseError {
 	httpCode: string | null;
 
 	constructor(
@@ -445,8 +398,10 @@ export class NodeApiError extends NodeError {
 	}
 }
 
-export class NodeSSLError extends ExecutionBaseError {
+export class NodeSSLError extends BaseError {
 	constructor(cause: Error) {
 		super("SSL Issue: consider using the 'Ignore SSL issues' option", { cause });
 	}
 }
+
+export type NodeError = NodeOperationError | NodeApiError | NodeSSLError;

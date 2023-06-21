@@ -1,4 +1,4 @@
-import { ExpressionExtensionError } from '../ExpressionError';
+import { ExpressionExtensionError } from '../errors/ExpressionErrors';
 import type { ExtensionMap } from './Extensions';
 
 function isEmpty(value: object): boolean {

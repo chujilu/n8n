@@ -6,6 +6,7 @@ import type {
 	WorkflowActivateMode,
 	WorkflowExecuteMode,
 } from 'n8n-workflow';
+import { WebhookError } from 'n8n-workflow';
 
 import * as NodeExecuteFunctions from 'n8n-core';
 
@@ -32,7 +33,9 @@ export class ActiveWebhooks {
 		activation: WorkflowActivateMode,
 	): Promise<void> {
 		if (workflow.id === undefined) {
-			throw new Error('Webhooks can only be added for saved workflows as an id is needed!');
+			throw new WebhookError('Webhooks can only be added for saved workflows as an id is needed!', {
+				severity: 'warning',
+			});
 		}
 		if (webhookData.path.endsWith('/')) {
 			// eslint-disable-next-line no-param-reassign
@@ -47,8 +50,9 @@ export class ActiveWebhooks {
 
 		// check that there is not a webhook already registered with that path/method
 		if (this.webhookUrls[webhookKey] && !webhookData.webhookId) {
-			throw new Error(
+			throw new WebhookError(
 				`The URL path that the "${webhookData.node}" node uses is already taken. Please change it to something else.`,
+				{ severity: 'warning' },
 			);
 		}
 

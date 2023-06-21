@@ -40,7 +40,7 @@ import type {
 	NodeParameterValueType,
 	PostReceiveAction,
 } from './Interfaces';
-import { NodeApiError, NodeOperationError } from './NodeErrors';
+import { NodeApiError, NodeOperationError } from './errors';
 import * as NodeHelpers from './NodeHelpers';
 
 import type { Workflow } from './Workflow';

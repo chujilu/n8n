@@ -8,7 +8,7 @@ import type {
 	IRun,
 	ExecutionStatus,
 } from 'n8n-workflow';
-import { createDeferredPromise, LoggerProxy } from 'n8n-workflow';
+import { createDeferredPromise, LoggerProxy, WorkflowExecutionWarning } from 'n8n-workflow';
 
 import type { ChildProcess } from 'child_process';
 import type PCancelable from 'p-cancelable';
@@ -63,7 +63,9 @@ export class ActiveExecutions {
 			);
 			executionId = executionResult.id;
 			if (executionId === undefined) {
-				throw new Error('There was an issue assigning an execution id to the execution');
+				throw new WorkflowExecutionWarning(
+					'There was an issue assigning an execution id to the execution',
+				);
 			}
 			executionStatus = 'running';
 		} else {
@@ -97,7 +99,7 @@ export class ActiveExecutions {
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	attachWorkflowExecution(executionId: string, workflowExecution: PCancelable<IRun>) {
 		if (this.activeExecutions[executionId] === undefined) {
-			throw new Error(
+			throw new WorkflowExecutionWarning(
 				`No active execution with id "${executionId}" got found to attach to workflowExecution to!`,
 			);
 		}
@@ -110,7 +112,7 @@ export class ActiveExecutions {
 		responsePromise: IDeferredPromise<IExecuteResponsePromiseData>,
 	): void {
 		if (this.activeExecutions[executionId] === undefined) {
-			throw new Error(
+			throw new WorkflowExecutionWarning(
 				`No active execution with id "${executionId}" got found to attach to workflowExecution to!`,
 			);
 		}
@@ -191,7 +193,7 @@ export class ActiveExecutions {
 		const waitPromise = await createDeferredPromise<IRun | undefined>();
 
 		if (this.activeExecutions[executionId] === undefined) {
-			throw new Error(`There is no active execution with id "${executionId}".`);
+			throw new WorkflowExecutionWarning(`There is no active execution with id "${executionId}".`);
 		}
 
 		this.activeExecutions[executionId].postExecutePromises.push(waitPromise);

@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 import config from '@/config';
-import { ErrorReporterProxy, ExecutionBaseError } from 'n8n-workflow';
+import { ErrorReporterProxy, BaseError } from 'n8n-workflow';
 
 let initialized = false;
 
@@ -35,7 +35,7 @@ export const initErrorHandling = async () => {
 
 	const seenErrors = new Set<string>();
 	addGlobalEventProcessor((event, { originalException }) => {
-		if (originalException instanceof ExecutionBaseError && originalException.severity === 'warning')
+		if (originalException instanceof BaseError && originalException.severity === 'warning')
 			return null;
 		if (!event.exception) return null;
 		const eventHash = createHash('sha1').update(JSON.stringify(event.exception)).digest('base64');

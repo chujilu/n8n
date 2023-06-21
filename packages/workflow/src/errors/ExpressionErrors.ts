@@ -1,10 +1,10 @@
-import type { IDataObject } from './Interfaces';
-import { ExecutionBaseError } from './NodeErrors';
+import type { IDataObject } from '../Interfaces';
+import { BaseError } from './BaseError';
 
 /**
  * Class for instantiating an expression error
  */
-export class ExpressionError extends ExecutionBaseError {
+export class ExpressionError extends BaseError {
 	clientOnly = false;
 
 	constructor(

@@ -1,6 +1,6 @@
 import config from '@/config';
 import type { ICredentialDataDecryptedObject, ICredentialTypes } from 'n8n-workflow';
-import { deepCopy, LoggerProxy as Logger, jsonParse } from 'n8n-workflow';
+import { deepCopy, LoggerProxy as Logger, jsonParse, CredentialError } from 'n8n-workflow';
 import type { ICredentialsOverwrite } from '@/Interfaces';
 
 class CredentialsOverwritesClass {
@@ -107,7 +107,7 @@ export function CredentialsOverwrites(
 		if (credentialTypes) {
 			credentialsOverwritesInstance = new CredentialsOverwritesClass(credentialTypes);
 		} else {
-			throw new Error('CredentialsOverwrites not initialized yet');
+			throw new CredentialError('CredentialsOverwrites not initialized yet');
 		}
 	}
 

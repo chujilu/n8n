@@ -1,4 +1,4 @@
-import { ExpressionExtensionError } from './../ExpressionError';
+import { ExpressionExtensionError } from '../errors/ExpressionErrors';
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import { DateTime } from 'luxon';

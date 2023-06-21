@@ -1,5 +1,5 @@
 import type { INode } from '../src/Interfaces';
-import { NodeApiError } from '../src/NodeErrors';
+import { NodeApiError } from '../src/errors/NodeErrors';
 
 const node: INode = {
 	id: '1',

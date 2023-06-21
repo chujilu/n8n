@@ -27,7 +27,7 @@ import type {
 	ProxyInput,
 } from './Interfaces';
 import * as NodeHelpers from './NodeHelpers';
-import { ExpressionError } from './ExpressionError';
+import { ExpressionError } from './errors';
 import type { Workflow } from './Workflow';
 import { augmentArray, augmentObject } from './AugmentObject';
 

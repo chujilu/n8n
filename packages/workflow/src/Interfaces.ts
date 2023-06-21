@@ -13,10 +13,7 @@ import type { CODE_EXECUTION_MODES, CODE_LANGUAGES } from './Constants';
 import type { IDeferredPromise } from './DeferredPromise';
 import type { Workflow } from './Workflow';
 import type { WorkflowHooks } from './WorkflowHooks';
-import type { WorkflowActivationError } from './WorkflowActivationError';
-import type { WorkflowOperationError } from './WorkflowErrors';
-import type { NodeApiError, NodeOperationError } from './NodeErrors';
-import type { ExpressionError } from './ExpressionError';
+import type { ExecutionError, NodeError } from './errors';
 import type { ExecutionStatus } from './ExecutionStatus';
 import type { AuthenticationMethod } from './Authentication';
 
@@ -77,13 +74,6 @@ export interface IConnection {
 	// The output/input-index of destination node (if node has multiple inputs/outputs of the same type)
 	index: number;
 }
-
-export type ExecutionError =
-	| ExpressionError
-	| WorkflowActivationError
-	| WorkflowOperationError
-	| NodeOperationError
-	| NodeApiError;
 
 // Get used to gives nodes access to credentials
 export interface IGetCredentials {
@@ -950,13 +940,12 @@ export interface INodeExecutionData {
 		| IBinaryKeyData
 		| IPairedItemData
 		| IPairedItemData[]
-		| NodeApiError
-		| NodeOperationError
+		| NodeError
 		| number
 		| undefined;
 	json: IDataObject;
 	binary?: IBinaryKeyData;
-	error?: NodeApiError | NodeOperationError;
+	error?: NodeError;
 	pairedItem?: IPairedItemData | IPairedItemData[] | number;
 	index?: number;
 }
@@ -1789,10 +1778,6 @@ export interface ILogger {
 	info: (message: string, meta?: object) => void;
 	warn: (message: string, meta?: object) => void;
 	error: (message: string, meta?: object) => void;
-}
-
-export interface IStatusCodeMessages {
-	[key: string]: string;
 }
 
 export type DocumentationLink = {

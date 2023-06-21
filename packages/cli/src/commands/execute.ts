@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import { flags } from '@oclif/command';
 import { PLACEHOLDER_EMPTY_WORKFLOW_ID } from 'n8n-core';
 import type { IWorkflowBase } from 'n8n-workflow';
-import { ExecutionBaseError } from 'n8n-workflow';
+import { BaseError } from 'n8n-workflow';
 
 import { ActiveExecutions } from '@/ActiveExecutions';
 import * as Db from '@/Db';
@@ -149,7 +149,7 @@ export class Execute extends BaseCommand {
 		this.logger.error('\nExecution error:');
 		this.logger.info('====================================');
 		this.logger.error(error.message);
-		if (error instanceof ExecutionBaseError) this.logger.error(error.description!);
+		if (error instanceof BaseError) this.logger.error(error.description!);
 		this.logger.error(error.stack!);
 	}
 }

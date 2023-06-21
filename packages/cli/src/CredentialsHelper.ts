@@ -41,6 +41,7 @@ import {
 	Workflow,
 	LoggerProxy as Logger,
 	ErrorReporterProxy as ErrorReporter,
+	CredentialError,
 } from 'n8n-workflow';
 
 import * as Db from '@/Db';
@@ -264,7 +265,7 @@ export class CredentialsHelper extends ICredentialsHelper {
 		userId?: string,
 	): Promise<Credentials> {
 		if (!nodeCredential.id) {
-			throw new Error(`Credential "${nodeCredential.name}" of type "${type}" has no ID.`);
+			throw new CredentialError('Credential has no ID', nodeCredential, { severity: 'warning' });
 		}
 
 		const credential = userId
@@ -275,8 +276,10 @@ export class CredentialsHelper extends ICredentialsHelper {
 			: await Db.collections.Credentials.findOneByOrFail({ id: nodeCredential.id, type });
 
 		if (!credential) {
-			throw new Error(
+			throw new CredentialError(
 				`Credential with ID "${nodeCredential.id}" does not exist for type "${type}".`,
+				nodeCredential,
+				{ severity: 'warning' },
 			);
 		}
 
@@ -297,7 +300,9 @@ export class CredentialsHelper extends ICredentialsHelper {
 		const credentialTypeData = this.credentialTypes.getByName(type);
 
 		if (credentialTypeData === undefined) {
-			throw new Error(`The credentials of type "${type}" are not known.`);
+			throw new CredentialError(`The credentials of type "${type}" are not known.`, undefined, {
+				severity: 'warning',
+			});
 		}
 
 		if (credentialTypeData.extends === undefined) {
