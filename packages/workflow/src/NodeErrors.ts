@@ -60,6 +60,7 @@ const ERROR_NESTING_PROPERTIES = ['error', 'err', 'response', 'body', 'data'];
 
 interface ExecutionBaseErrorOptions {
 	cause?: Error | JsonObject;
+	severity?: Severity;
 }
 
 export abstract class ExecutionBaseError extends Error {
@@ -73,12 +74,15 @@ export abstract class ExecutionBaseError extends Error {
 
 	lineNumber: number | undefined;
 
-	constructor(message: string, { cause }: ExecutionBaseErrorOptions) {
+	severity: Severity = 'error';
+
+	constructor(message: string, { cause, severity }: ExecutionBaseErrorOptions) {
 		const options = cause instanceof Error ? { cause } : {};
 		super(message, options);
 
 		this.name = this.constructor.name;
 		this.timestamp = Date.now();
+		this.severity = severity ?? 'error';
 
 		if (cause instanceof ExecutionBaseError) {
 			this.context = cause.context;
@@ -105,14 +109,12 @@ export abstract class ExecutionBaseError extends Error {
  * Base class for specific NodeError-types, with functionality for finding
  * a value recursively inside an error object.
  */
-export abstract class NodeError extends ExecutionBaseError {
+abstract class NodeError extends ExecutionBaseError {
 	node: INode;
 
-	severity: Severity = 'error';
-
-	constructor(node: INode, error: Error | JsonObject) {
-		const message = error instanceof Error ? error.message : '';
-		super(message, { cause: error });
+	constructor(node: INode, { cause, severity }: ExecutionBaseErrorOptions) {
+		const message = cause instanceof Error ? cause.message : '';
+		super(message, { cause, severity });
 		this.node = node;
 	}
 
@@ -251,10 +253,9 @@ export class NodeOperationError extends NodeError {
 		if (typeof error === 'string') {
 			error = new Error(error);
 		}
-		super(node, error);
+		super(node, { cause: error, severity: options.severity });
 
 		if (options.message) this.message = options.message;
-		if (options.severity) this.severity = options.severity;
 		this.description = options.description;
 		this.context.runIndex = options.runIndex;
 		this.context.itemIndex = options.itemIndex;
@@ -310,10 +311,9 @@ export class NodeApiError extends NodeError {
 			severity,
 		}: NodeApiErrorOptions = {},
 	) {
-		super(node, error);
+		if (httpCode?.charAt(0) !== '5') severity = 'warning';
 
-		if (severity) this.severity = severity;
-		else if (httpCode?.charAt(0) !== '5') this.severity = 'warning';
+		super(node, { cause: error, severity });
 
 		if (error.error) {
 			// only for request library error
