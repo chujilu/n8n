@@ -13,7 +13,7 @@ export function routesForVersionControl(server: Server) {
 		authorEmail: '',
 		repositoryUrl: '',
 		branchReadOnly: false,
-		branchColor: '#1d6acb',
+		branchColor: '#5296D6',
 		connected: false,
 		publicKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHEX+25m',
 	};

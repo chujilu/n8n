@@ -126,7 +126,7 @@ describe('SettingsVersionControl', () => {
 		expect(updatePreferencesSpy).toHaveBeenCalledWith({
 			branchName: 'main',
 			branchReadOnly: false,
-			branchColor: '#1d6acb',
+			branchColor: '#5296D6',
 		});
 		await waitFor(() => expect(screen.getByText('Settings successfully saved')).toBeVisible());
 

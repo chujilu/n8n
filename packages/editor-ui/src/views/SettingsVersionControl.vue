@@ -226,7 +226,6 @@ const refreshBranches = async () => {
 						>{{ locale.baseText('settings.versionControl.button.disconnect') }}</n8n-button
 					>
 				</div>
-				<small>{{ locale.baseText('settings.versionControl.repoUrlDescription') }}</small>
 			</div>
 			<div :class="[$style.group, $style.groupFlex]">
 				<div>
