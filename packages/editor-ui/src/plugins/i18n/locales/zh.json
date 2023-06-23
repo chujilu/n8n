@@ -30,7 +30,7 @@
 	"generic.communityNode.tooltip": "这是我们社区的一个节点。它属于{packageName}包。<a href=\"{docURL}\" target=\"_blank\" title=\"阅读 n8n 文档\">了解更多</a>",
 	"generic.copy": "复制",
 	"generic.delete": "删除",
-	"generic.executions": "执行次数",
+	"generic.executions": "执行",
 	"generic.or": "或者",
 	"generic.clickToCopy": "点击复制",
 	"generic.copiedToClipboard": "已复制到剪贴板",
