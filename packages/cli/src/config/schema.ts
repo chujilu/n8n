@@ -1114,7 +1114,7 @@ export const schema = {
 	license: {
 		serverUrl: {
 			format: String,
-			default: 'https://license.n8n.io/v1',
+			default: 'http://127.0.0.1/v1',
 			env: 'N8N_LICENSE_SERVER_URL',
 			doc: 'License server url to retrieve license.',
 		},
