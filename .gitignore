@@ -21,3 +21,4 @@ packages/**/.turbo
 cypress/videos/*
 cypress/screenshots/*
 *.swp
+CHANGELOG-*.md
